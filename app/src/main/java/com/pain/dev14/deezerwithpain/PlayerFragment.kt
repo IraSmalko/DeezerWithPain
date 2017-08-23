@@ -30,7 +30,6 @@ import org.greenrobot.eventbus.ThreadMode
 class PlayerFragment : Fragment() {
 
     lateinit var player: SimpleExoPlayer
-    var radioUrl: String = "http://e-cdn-preview-5.deezer.com/stream/51afcde9f56a132096c0496cc95eb24b-4.mp3"
     var previewUrl: String = ""
     var tracks: Tracks? = null
 
@@ -38,25 +37,9 @@ class PlayerFragment : Fragment() {
     var KEY_LIST_DATA = "listData"
     val extractorsFactory = DefaultExtractorsFactory()
 
-    fun newInstance(tracks: Tracks): PlayerFragment {
-        val playerFragment = PlayerFragment()
-        val bundle = Bundle()
-        bundle.putString(KEY_PREVIEW_URL, previewUrl)
-        bundle.putParcelable(KEY_LIST_DATA, tracks)
-        playerFragment.setArguments(bundle)
-        return playerFragment
-    }
-
     fun newInstance(): PlayerFragment {
         return PlayerFragment()
     }
-
-//    override fun onClick(previewUrl: String, tracks: Tracks) {
-//        player.playWhenReady = false
-//        this.previewUrl = previewUrl
-//        this.tracks = tracks
-//        setPlayer()
-//    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
@@ -76,11 +59,10 @@ class PlayerFragment : Fragment() {
                 extractorsFactory, null, null)
 
         var sourceList = Array(1, { firstSource })
-        var concatenatedSource: ConcatenatingMediaSource? = null
 
-        if (tracks != null) {
-            sourceList = Array(tracks!!.data.size, { i ->
-                ExtractorMediaSource(Uri.parse(tracks!!.data.get(i).preview),
+        tracks?.let {
+            sourceList = Array(it.data.size, { i ->
+                ExtractorMediaSource(Uri.parse(it.data.get(i).preview),
                         DefaultDataSourceFactory(activity, Util.getUserAgent(activity, getString(R.string.app_name))),
                         extractorsFactory, null, null)
             })
@@ -89,17 +71,10 @@ class PlayerFragment : Fragment() {
         player = ExoPlayerFactory.newSimpleInstance(
                 DefaultRenderersFactory(activity),
                 DefaultTrackSelector(), DefaultLoadControl())
-        //  exo_next.setOnClickListener({ v -> playNext() })
         player_view.player = player
         player.prepare(ConcatenatingMediaSource(*sourceList))
         player.playWhenReady = true
 
-    }
-
-    private fun playNext() {
-
-
-        player.playWhenReady = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
