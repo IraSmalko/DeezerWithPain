@@ -33,16 +33,11 @@ class PlayerFragment : Fragment() {
     var previewUrl: String = ""
     var tracks: Tracks? = null
 
-    val KEY_PREVIEW_URL = "previewUrl"
-    var KEY_LIST_DATA = "listData"
-    val extractorsFactory = DefaultExtractorsFactory()
-
     fun newInstance(): PlayerFragment {
         return PlayerFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
         return inflater.inflate(R.layout.player, container, false)
     }
 
@@ -53,7 +48,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun setPlayer() {
-
+        val extractorsFactory = DefaultExtractorsFactory()
         val firstSource = ExtractorMediaSource(Uri.parse(previewUrl),
                 DefaultDataSourceFactory(activity, Util.getUserAgent(activity, getString(R.string.app_name))),
                 extractorsFactory, null, null)
@@ -75,14 +70,6 @@ class PlayerFragment : Fragment() {
         player.prepare(ConcatenatingMediaSource(*sourceList))
         player.playWhenReady = true
 
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            previewUrl = arguments.getString(KEY_PREVIEW_URL)
-            tracks = arguments.getParcelable(KEY_LIST_DATA)
-        }
     }
 
     override fun onAttach(context: Context?) {

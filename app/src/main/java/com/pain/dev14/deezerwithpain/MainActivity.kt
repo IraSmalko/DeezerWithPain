@@ -1,6 +1,11 @@
 package com.pain.dev14.deezerwithpain
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.github.nitrico.lastadapter.LastAdapter
@@ -16,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     var listData = mutableListOf<Data>()
     lateinit var lastAdapter: LastAdapter
     lateinit var playerFragment: PlayerFragment
+    var service: PlayerService? = null
+    var bound = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,12 +47,39 @@ class MainActivity : AppCompatActivity() {
                 .into(rv)
     }
 
+    override fun onStart() {
+        super.onStart()
+        val intent = Intent(this, PlayerService::class.java)
+        bindService(intent, connection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (bound) {
+            unbindService(connection)
+            bound = false
+        }
+    }
+
+
     private fun displayResult(result: List<Data>) {
         listData.addAll(result)
         lastAdapter.notifyDataSetChanged()
     }
+
+
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, ibBinder: IBinder) {
+
+            val binder = service as PlayerBinder
+            service = binder.getService()
+            bound = true
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            bound = false
+        }
+    }
 }
 
-interface OnClickListener {
-    fun onClick(previewUrl: String, tracks: Tracks)
-}
