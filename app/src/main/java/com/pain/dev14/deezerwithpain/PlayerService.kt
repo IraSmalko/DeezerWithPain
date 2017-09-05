@@ -219,9 +219,9 @@ class PlayerService : Service() {
 
         if (isPlaying) {
             views.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_pause)
-            bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_play)
+            bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_pause)
         } else {
-            views.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_pause)
+            views.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_play)
             bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_play)
         }
 
