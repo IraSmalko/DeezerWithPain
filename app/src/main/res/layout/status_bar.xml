@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
@@ -13,19 +12,11 @@
         android:layout_height="@dimen/status_bar_album_art"
         android:gravity="center" />
 
-    <ImageView
-        android:id="@+id/status_bar_icon"
-        android:layout_width="@dimen/status_bar_album_art"
-        android:layout_height="@dimen/status_bar_album_art"
-        android:scaleType="center"
-
-        android:visibility="gone" />
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:orientation="vertical"
         android:paddingLeft="@dimen/status_bar_button_info_container_padding_left">
 
@@ -33,32 +24,39 @@
             android:id="@+id/status_bar_track_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:textColor="#000"
             android:textSize="@dimen/text_size_medium"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/status_bar_artist_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:singleLine="true" />
 
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/status_bar_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/exo_controls_play" />
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:layout_height="@dimen/play_controls_notification"
+        android:src="@drawable/exo_controls_play"
+        android:background="@color/transparent"
+        android:tint="#000"/>
 
     <ImageButton
         android:id="@+id/status_bar_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/exo_controls_fastforward" />
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:layout_height="@dimen/play_controls_notification"
+        android:src="@drawable/exo_controls_next"
+        android:background="@color/transparent"
+        android:tint="#000"/>
 
-    <ImageButton
-        android:id="@+id/status_bar_collapse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/exo_controls_next" />
 </LinearLayout>

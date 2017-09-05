@@ -84,8 +84,8 @@ class PlayerService : Service() {
         player.playWhenReady = false
         this.previewUrl = previewUrl
         this.tracks = tracks
-        setPlayer()
         findPosition()
+        setPlayer()
     }
 
     fun findPosition() {
@@ -134,7 +134,7 @@ class PlayerService : Service() {
                     }
 
                     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                        if (playbackState == Player.STATE_ENDED){
+                        if (playbackState == Player.STATE_ENDED) {
                             currentPosition = currentPosition + 1
                             setPlayer()
                         }
@@ -177,7 +177,7 @@ class PlayerService : Service() {
 
 // showing default album image
         views.setViewVisibility(R.id.player_view, View.VISIBLE)
-        views.setViewVisibility(R.id.status_bar_album_art, View.GONE)
+        views.setViewVisibility(R.id.status_bar_album_art, View.VISIBLE)
         bigViews.setImageViewBitmap(R.id.status_bar_album_art, BitmapFactory.decodeResource(this
                 .getResources(), R.drawable.images, BitmapFactory.Options()))
 
@@ -215,19 +215,14 @@ class PlayerService : Service() {
         views.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent)
         bigViews.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent)
 
-        views.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent)
         bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent)
 
         if (isPlaying) {
-            views.setImageViewResource(R.id.status_bar_play,
-                    android.R.drawable.ic_media_pause)
-            bigViews.setImageViewResource(R.id.status_bar_play,
-                    android.R.drawable.ic_media_pause)
+            views.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_pause)
+            bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_play)
         } else {
-            views.setImageViewResource(R.id.status_bar_play,
-                    android.R.drawable.ic_media_play)
-            bigViews.setImageViewResource(R.id.status_bar_play,
-                    android.R.drawable.ic_media_play)
+            views.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_pause)
+            bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.exo_controls_play)
         }
 
         views.setTextViewText(R.id.status_bar_track_name, data.title)

@@ -34,7 +34,7 @@
             android:background="?android:selectableItemBackground"
             android:padding="10.0dip"
             android:scaleType="fitCenter"
-            android:tint="@color/background_grey"
+            android:tint="#000"
             android:src="@drawable/exo_controls_previous" />
 
         <ImageButton
@@ -45,7 +45,7 @@
             android:background="?android:selectableItemBackground"
             android:padding="10.0dip"
             android:scaleType="fitCenter"
-            android:tint="@color/background_grey"
+            android:tint="#000"
             android:src="@drawable/exo_controls_play" />
 
         <ImageButton
@@ -56,7 +56,7 @@
             android:background="?android:selectableItemBackground"
             android:padding="10.0dip"
             android:scaleType="fitCenter"
-            android:tint="@color/background_grey"
+            android:tint="#000"
             android:src="@drawable/exo_controls_next" />
     </LinearLayout>
 
@@ -108,7 +108,7 @@
             android:layout_gravity="left"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
-            android:maxLines="1" />
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/status_bar_album_name"
