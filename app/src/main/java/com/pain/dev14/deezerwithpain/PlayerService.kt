@@ -15,14 +15,12 @@ import android.widget.RemoteViews
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 
@@ -32,11 +30,9 @@ import com.google.android.exoplayer2.util.Util
  */
 class PlayerService : Service() {
 
-    var STARTFOREGROUND_ACTION = "action.startforeground"
     var STOPFOREGROUND_ACTION = "action.stopforeground"
     var MAIN_ACTION = "action.main"
     var PREV_ACTION = "action.prev"
-    var INIT_ACTION = "action.init"
     var PLAY_ACTION = "action.play"
     var NEXT_ACTION = "action.next"
 
@@ -49,8 +45,7 @@ class PlayerService : Service() {
         )
     }
     var previewUrl: String = ""
-    var tracks: Tracks? = null
-    val cache = mutableListOf<Int>()
+    lateinit var tracks: Tracks
     var currentPosition: Int = 0
     lateinit var currentTrack: Data
 
@@ -85,6 +80,94 @@ class PlayerService : Service() {
         return START_STICKY;
     }
 
+    fun onClick(previewUrl: String, tracks: Tracks) {
+        player.playWhenReady = false
+        this.previewUrl = previewUrl
+        this.tracks = tracks
+        setPlayer()
+        findPosition()
+    }
+
+    fun findPosition() {
+        tracks.let { it ->
+            it.data.forEach {
+                if (it.preview == previewUrl) {
+                    currentPosition = tracks.data.indexOf(it)
+                }
+            }
+        }
+    }
+
+    fun playNext() {
+        if (currentPosition < tracks.data.size - 1) {
+            currentPosition = currentPosition + 1
+        }
+        setPlayer()
+    }
+
+    fun playBack() {
+        if (currentPosition > 0) {
+            currentPosition = currentPosition - 1
+        }
+        setPlayer()
+    }
+
+    fun setPlayer() {
+        currentTrack = tracks.data.get(currentPosition)
+        loadBitmap(currentTrack.cover_small, object : Callback {
+            override fun bitmapReady(bitmap: Bitmap) {
+                showNotification(currentTrack, true, bitmap)
+                val extractorsFactory = DefaultExtractorsFactory()
+                val source = ExtractorMediaSource(Uri.parse(currentTrack.preview),
+                        DefaultDataSourceFactory(applicationContext, Util.getUserAgent(applicationContext, getString(R.string.app_name))),
+                        extractorsFactory, null, null)
+
+                player.prepare(source)
+                player.addListener(object : Player.EventListener {
+                    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
+                    }
+
+                    override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
+                    }
+
+                    override fun onPlayerError(error: ExoPlaybackException?) {
+                    }
+
+                    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                        if (playbackState == Player.STATE_ENDED){
+                            currentPosition = currentPosition + 1
+                            setPlayer()
+                        }
+                    }
+
+                    override fun onLoadingChanged(isLoading: Boolean) {
+                    }
+
+                    override fun onPositionDiscontinuity() {
+                    }
+
+                    override fun onRepeatModeChanged(repeatMode: Int) {
+                    }
+
+                    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
+                    }
+
+                })
+                player.playWhenReady = true
+            }
+        })
+    }
+
+    fun loadBitmap(imageUrl: String, callback: Callback) {
+        Glide.with(applicationContext)
+                .load(imageUrl)
+                .asBitmap()
+                .into(object : SimpleTarget<Bitmap>(300, 300) {
+                    override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>?) {
+                        callback.bitmapReady(resource)
+                    }
+                })
+    }
 
     fun showNotification(data: Data, isPlaying: Boolean, bitmap: Bitmap) {
         val views = RemoteViews(packageName,
@@ -175,79 +258,6 @@ class PlayerService : Service() {
         status.contentIntent = pendingIntent
         startForeground(101, status)
     }
-
-
-    fun onClick(previewUrl: String, tracks: Tracks) {
-        player.playWhenReady = false
-        this.previewUrl = previewUrl
-        this.tracks = tracks
-        setPlayer()
-        findPosition()
-    }
-
-    fun findPosition() {
-        tracks?.let { it ->
-            it.data.forEach {
-                if (it.preview == previewUrl) {
-                    currentPosition = tracks!!.data.indexOf(it)
-                    cache.add(currentPosition)
-                }
-            }
-        }
-    }
-
-    fun playNext() {
-        if (currentPosition < tracks!!.data.size - 1) {
-            currentPosition = currentPosition + 1
-        }
-        setPlayer()
-    }
-
-    fun playBack() {
-        if (currentPosition > 0) {
-            currentPosition = currentPosition - 1
-        }
-        setPlayer()
-    }
-
-    fun setPlayer() {
-        currentTrack = tracks!!.data.get(currentPosition)
-        loadBitmap(currentTrack.cover_small, object : Callback {
-            override fun bitmapReady(bitmap: Bitmap) {
-                showNotification(currentTrack, true, bitmap)
-                val extractorsFactory = DefaultExtractorsFactory()
-                val firstSource = ExtractorMediaSource(Uri.parse(currentTrack.preview),
-                        DefaultDataSourceFactory(applicationContext, Util.getUserAgent(applicationContext, getString(R.string.app_name))),
-                        extractorsFactory, null, null)
-
-                var sourceList = Array(1, { firstSource })
-
-//        tracks?.let {
-//            sourceList = Array(it.data.size, { i ->
-//                ExtractorMediaSource(Uri.parse(it.data.get(i).preview),
-//                        DefaultDataSourceFactory(applicationContext, Util.getUserAgent(applicationContext, getString(R.string.app_name))),
-//                        extractorsFactory, null, null)
-//            })
-//        }
-
-                player.prepare(ConcatenatingMediaSource(*sourceList))
-
-                player.playWhenReady = true
-            }
-        })
-    }
-
-    fun loadBitmap(imageUrl: String, callback: Callback) {
-        Glide.with(applicationContext)
-                .load(imageUrl)
-                .asBitmap()
-                .into(object : SimpleTarget<Bitmap>(300, 300) {
-                    override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>?) {
-                        callback.bitmapReady(resource)
-                    }
-                })
-    }
-
 
     override fun onBind(p0: Intent?): IBinder {
         return PlayerBinder()
