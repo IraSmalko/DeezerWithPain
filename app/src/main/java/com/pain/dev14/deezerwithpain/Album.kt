@@ -11,13 +11,22 @@ import paperparcel.PaperParcelable
  */
 data class Album(val id: Long,
                  val title: String,
-                 val tracks: Tracks)
+                 val tracks: Tracks,
+                 val cover_small: String)
+
+@PaperParcel
+data class Tracks(val data: List<Data>) : PaperParcelable {
+    companion object {
+        @JvmField val CREATOR = PaperParcelTracks.CREATOR
+    }
+}
 
 @PaperParcel
 data class Data(val id: Long,
                 val title: String,
                 val artist: Artist,
-                val preview: String) : PaperParcelable {
+                val preview: String,
+                var cover_small: String) : PaperParcelable {
     companion object {
         @JvmField val CREATOR = PaperParcelData.CREATOR
     }
@@ -31,9 +40,3 @@ data class Artist(val id: Long,
     }
 }
 
-@PaperParcel
-data class Tracks(val data: List<Data>) : PaperParcelable {
-    companion object {
-        @JvmField val CREATOR = PaperParcelTracks.CREATOR
-    }
-}

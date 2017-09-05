@@ -24,6 +24,4 @@ android:layout_width="match_parent"
         <ImageButton android:id="@id/exo_next"
             style="@style/ExoMediaButton.Next"/>
 
-
-
 </LinearLayout>

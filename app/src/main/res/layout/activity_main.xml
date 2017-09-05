@@ -23,12 +23,12 @@
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginEnd="64dp">
 
-        <FrameLayout
-            android:id="@+id/player_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout="@layout/player"
-            app:layout_collapseMode="parallax"/>
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/player_view"
+                android:layout_width="match_parent"
+                android:layout_height="92dp"
+                android:paddingBottom="16dp"
+                app:controller_layout_id="@layout/custom_controls"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

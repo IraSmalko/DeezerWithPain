@@ -20,7 +20,6 @@ class Repository{
 
     fun getAlbum() = instance.getAlbum("/album/302127")
             .subscribeOn(Schedulers.io())
-            .map { it.tracks.data }
             .observeOn(AndroidSchedulers.mainThread())
 
 }

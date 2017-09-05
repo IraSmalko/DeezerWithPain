@@ -19,9 +19,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.player.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 
 /**
@@ -72,24 +69,24 @@ class PlayerFragment : Fragment() {
 
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-    }
+//    override fun onAttach(context: Context?) {
+//        super.onAttach(context)
+//        if (!EventBus.getDefault().isRegistered(this)) {
+//            EventBus.getDefault().register(this);
+//        }
+//    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        player.playWhenReady = false
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(ebEvent: EBEvent) {
-        player.playWhenReady = false
-        this.previewUrl = ebEvent.preview
-        this.tracks = ebEvent.tracks
-        setPlayer()
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        player.playWhenReady = false
+//        EventBus.getDefault().unregister(this)
+//    }
+//
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    fun onEvent(ebEvent: EBEvent) {
+//        player.playWhenReady = false
+//        this.previewUrl = ebEvent.preview
+//        this.tracks = ebEvent.tracks
+//        setPlayer()
+//    }
 }
